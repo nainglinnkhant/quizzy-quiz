@@ -107,6 +107,7 @@ export default {
                if(correctAnswer.value === selectedAnswer.value) {
                     marks.value++;
                }
+
                setTimeout(() => {
                     questionNumber.value++;
 
@@ -115,6 +116,7 @@ export default {
                     }
 
                     nextButtonClicked.value = false;
+                    selectedAnswer.value = null;
                }, 1000);
           }
 

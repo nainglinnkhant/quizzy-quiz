@@ -3,7 +3,8 @@
           @click="selectAnswer(suggestion)"
           :class="{
                wrong: isAnswerWrong,
-               correct: isAnswerCorrect
+               correct: isAnswerCorrect,
+               selected: selectedAnswer === suggestion,
           }">
           {{ suggestion }}
      </button>
@@ -56,9 +57,6 @@ export default {
      color: #1f232a;
 }
 .suggestion-item:focus {
-     border-color: #1f232a;
-     background: #61dbfb;
-     color: #1f232a;
      outline: none;
 }
 .wrong {
@@ -66,7 +64,7 @@ export default {
      background: #e3242b !important;
      border-color: #e3242b !important;
 }
-.correct {
+.correct, .selected {
      color: #1f232a;
      background: #61dbfb;
      border-color: #61dbfb;
