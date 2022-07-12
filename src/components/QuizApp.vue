@@ -4,11 +4,14 @@
      <div class="quiz-container container">
           <h2>Quiz App</h2>
 
-          <label for="category">Choose a category :</label>
-
           <select name="category" id="category" v-model="selectedCategory">
+               <option value="" selected disabled hidden>Choose a category</option>
                <option-list v-for="category in categories" :key="category.id" :category="category"></option-list>
           </select>
+
+          <div v-if="isLoading" class="spinner-container">
+               <spinner />
+          </div>
 
           <div class="quiz-box" v-if="isQuizStarted">
                <div class="container">
@@ -47,15 +50,17 @@ import { useStore } from 'vuex';
 import OptionList from './OptionList.vue';
 import SuggestionList from './SuggestionList.vue';
 import FinishQuizDialog from './FinishQuizDialog.vue';
+import Spinner from './Spinner.vue';
 
 export default {
      components: {
           OptionList,
           SuggestionList,
-          FinishQuizDialog
+          FinishQuizDialog,
+          Spinner,
      },
      setup() {
-          const selectedCategory = ref(null);
+          const selectedCategory = ref('');
           const questionNumber = ref(0);
           const isLastQuestion = ref(false);
           const isQuizStarted = ref(false);
@@ -63,6 +68,7 @@ export default {
           const selectedAnswer = ref(null);
           const nextButtonClicked = ref(false);
           const isQuizFinished = ref(false);
+          const isLoading = ref(false);
 
           const store = useStore();
 
@@ -83,11 +89,15 @@ export default {
           });
 
           watch(selectedCategory, async function(_, oldValue) {
-               if(selectedCategory.value !== null && oldValue !== selectedCategory.value) {
+               if(selectedCategory.value !== '' && oldValue !== selectedCategory.value) {
                     restartQuiz();
+
+                    isLoading.value = true;
                     await store.dispatch('fetchQuiz', {
                          selectedCategory: selectedCategory.value  
                     });
+                    isLoading.value = false;
+
                     isQuizStarted.value = true;
                }
           });
@@ -124,7 +134,7 @@ export default {
           }
 
           function playAgain() {
-               selectedCategory.value = null;
+               selectedCategory.value = '';
                restartQuiz();
           }
 
@@ -152,7 +162,8 @@ export default {
                marks,
                finishQuiz,
                isQuizFinished,
-               playAgain
+               playAgain,
+               isLoading,
           };
      }
 }
@@ -177,10 +188,16 @@ label {
 select {
      padding: 7px 12px;
      margin-bottom: 10px;
+     border-radius: 5px;
 }
 select:focus {
      outline: none;
      color: #1f232a;
+}
+.spinner-container {
+     display: flex;
+     justify-content: center;
+     margin-top: 80px;
 }
 .quiz-box {
      padding: 20px 0;
